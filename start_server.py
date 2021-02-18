@@ -16,7 +16,7 @@ This file is used to start Kibana
 import sys, os, traceback, types, time
 
 sys.path.append(".")
-from serverLib import *
+from serverLib import run_py_file
 
 
 def isUserAdmin():
@@ -97,9 +97,9 @@ def start_server():
         rc = 0
 
         # Entry Point
-        run_py_file("server")
+        # run_py_file("server")
         # run_py_file("make_data_accessible")
-        # run_py_file("standardize")
+        run_py_file("standardize")
 
     x = input('Press Enter to exit.\n\n')
     return rc

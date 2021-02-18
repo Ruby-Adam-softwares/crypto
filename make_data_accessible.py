@@ -11,6 +11,7 @@ from serverLib import Constants, firebase_config
 
 def get_spark_table(name: str) -> DataFrame:
     table: DataFrame = Constants.SPARK_SESSION.table(tableName=name)
+    table.printSchema()
     return table
 
 
