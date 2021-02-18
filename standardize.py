@@ -84,6 +84,17 @@ def main():
         # TODO: Constants.spark_session
     table: DataFrame = Constants.SPARK_SESSION.table(tableName='crypto')
     table.show()
+    # spark.sql('SELECT spark_catalog.default.crypto.tsla.status.values FROM crypto').show()
+    # table.select('spark_catalog.default.crypto.tsla.status.values').show()
+    print(table.columns)
+    Constants.SPARK_SESSION.sql(
+       'SELECT `tsla.status.values` AS values, `tsla.status.keys` AS keys, `tsla.description` AS description '
+       'FROM crypto'
+    ).show()
+    table.createOrReplaceTempView('tesla')
+    Constants.SPARK_SESSION.sql('select `tsla.status.keys` from tesla').show()
+
+    # Constants.SPARK_SESSION.table('crypto').select('"tsla.description"').show()
     # Load
     # # pandas.DataFrame.from_dict()
     # save_json_as_spark_table(source=pandas.json_normalize(response.json()), tablename='crypto')
