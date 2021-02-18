@@ -59,7 +59,9 @@ class Constants:
     CURRENT_PLATFORM: OSPlatform = OSPlatform.WINDOWS
     SPARK_SESSION = SparkSession \
         .builder \
+        .appName("cryptoApp") \
         .enableHiveSupport() \
+        .config("spark.sql.streaming.schemaInference", True) \
         .getOrCreate()
 
 
