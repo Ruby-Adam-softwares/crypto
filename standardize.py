@@ -73,9 +73,11 @@ def main():
         schema=None)  # core-site.xml
     df.show()
     df.printSchema()
+    print(df.select('tsla.status.values').collect())
 
     # return
     # Transform
+    # Constants.SPARK_SESSION.table('crypto').select('"tsla.description"').show()
     try:
         df.write.saveAsTable('crypto')
     except pyspark.sql.utils.AnalysisException as tableExists:
@@ -84,6 +86,7 @@ def main():
         # TODO: Constants.spark_session
     table: DataFrame = Constants.SPARK_SESSION.table(tableName='crypto')
     table.show()
+    print(table.select('`tsla.status.values`').collect())
     # spark.sql('SELECT spark_catalog.default.crypto.tsla.status.values FROM crypto').show()
     # table.select('spark_catalog.default.crypto.tsla.status.values').show()
     print(table.columns)
@@ -94,7 +97,41 @@ def main():
     table.createOrReplaceTempView('tesla')
     Constants.SPARK_SESSION.sql('select `tsla.status.keys` from tesla').show()
 
-    # Constants.SPARK_SESSION.table('crypto').select('"tsla.description"').show()
+    spark.sql('SHOW DATABASES').show()
+    spark.sql('SHOW SCHEMAS').show()
+    spark.sql('SHOW TABLES').show()
+    spark.sql('CREATE DATABASE IF NOT EXISTS stocks COMMENT "For stocks & cryptocurrencies"')
+    spark.sql('USE stocks')
+
+    spark.sql('DESCRIBE DATABASE EXTENDED stocks').show()
+
+    try:
+        spark.sql(
+           'SELECT `tsla.status.values` AS values, `tsla.status.keys` AS keys, `tsla.description` AS description '
+           'FROM default.crypto'
+        ).write.saveAsTable('tesla')
+    except pyspark.sql.utils.AnalysisException as tableExists:
+        logging.warning(tableExists)
+    spark.sql('SHOW TABLES').show()
+
+    spark.sql('SELECT * FROM stocks.tesla').show()
+    print(spark.sql('SELECT values FROM stocks.tesla').collect())
+
+    df.createOrReplaceTempView('tesla_temp')
+    tesla_temp: DataFrame = spark.sql(
+        'SELECT tsla.status.values AS values, tsla.status.keys AS keys, tsla.description AS description '
+        'FROM tesla_temp'
+    )
+    tesla_temp.show()
+    print(tesla_temp.select('values').collect())
+    spark.table('stocks.tesla').drop()
+    spark.sql('DROP TABLE stocks.tesla')
+    try:
+        tesla_temp.write.saveAsTable('stocks.tesla')
+    except pyspark.sql.utils.AnalysisException as tableExists:
+        logging.warning(tableExists)
+    spark.table('stocks.tesla').show()
+    print(spark.table('stocks.tesla').select('values').collect())
     # Load
     # # pandas.DataFrame.from_dict()
     # save_json_as_spark_table(source=pandas.json_normalize(response.json()), tablename='crypto')
