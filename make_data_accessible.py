@@ -2,6 +2,7 @@
 import json
 import logging
 
+from pyspark.shell import spark
 from pyspark.sql import DataFrame
 from serverLib import *
 from hadoop_connect import hdfs_get_file
@@ -58,7 +59,7 @@ def main():
     ret['values'] = json_send['tsla.status.values']
     ret['description'] = json_send['tsla.description']
     # Load
-    upload_to_firebase(json_update={'test': ret})
+    upload_to_firebase(json_update={'test': json.loads(spark.table('stocks.tesla').toJSON().first())})
 
     # pass
 
