@@ -47,9 +47,37 @@ def upload_to_firebase(json_update: dict):
     print(Constants.db.get().val())
 
 
+def get_all_data():
+    # spark.sql('SHOW TABLES').createOrReplaceTempView('all_tables')
+    # print(spark.table('all_tables').select('tableName FROM all_tables WHERE isTemporary = false').collect())
+    # spark.sql(f'DROP TABLE all_tables')
+    spark.sql('CREATE DATABASE IF NOT EXISTS stocks COMMENT "For stocks & cryptocurrencies"')
+    spark.sql('USE stocks')
+
+    spark.sql('SHOW TABLES').select('tableName').filter('isTemporary = false').show()
+    # print(spark.sql('SHOW TABLES').select('tableName').filter('isTemporary = false').collect())
+    # print(type(spark.sql('SHOW TABLES').select('tableName').filter('isTemporary = false').collect()))
+
+    tables = []
+    for table in spark.sql('SHOW TABLES').select('tableName').filter('isTemporary = false').collect():
+        tables.append(table['tableName'])
+
+    all_data = {}
+    for tab in tables:
+        all_data[tab] = json.loads(spark.table(f'stocks.{tab}').toJSON().first())
+
+    from data_types_and_structures import DataTypesHandler
+    DataTypesHandler.print_data_recursively(
+        data=all_data, print_dict=DataTypesHandler.PRINT_DICT
+    )
+
+
 def main():
+    get_all_data()
     # Extract
     # hdfs_get_file(hadoop_path='crypto/tmp/crypto.json', params={"op": "OPEN"})
+    spark.sql('USE default')
+
     table: DataFrame = get_spark_table('crypto')
     # Transform
     json_send: dict = spark_table_to_json(table=table)

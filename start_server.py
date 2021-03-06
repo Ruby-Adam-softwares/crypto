@@ -97,10 +97,10 @@ def start_server():
         rc = 0
 
         # Entry Point
-        # run_py_file("server")
+        run_py_file("server")
         # run_py_file("get_save_data")
         # run_py_file("make_data_accessible")
-        run_py_file("standardize")
+        # run_py_file("standardize")
 
     x = input('Press Enter to exit.\n\n')
     return rc
