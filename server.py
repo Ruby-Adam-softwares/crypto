@@ -15,6 +15,8 @@ import time
 from playsound import playsound
 import sys
 
+from pyspark.python.pyspark.shell import spark
+
 sys.path.append(".")
 from serverLib import *
 from hdfs import HDFS_handler
@@ -55,6 +57,10 @@ def main():
     logging.getLogger('matplotlib').setLevel(logging.ERROR)
     logging.getLogger('py4j').setLevel(logging.ERROR)
     logging.getLogger('my_log').setLevel(logging.DEBUG)
+    logging.getLogger('HiveConf').setLevel(logging.ERROR)
+
+    spark.sparkContext.setLogLevel('ERROR')
+    Constants.SPARK_SESSION.sparkContext.setLogLevel('ERROR')
 
     def set_scheduler():
         play_sound()

@@ -155,3 +155,5 @@ def hdfs_get_file(hadoop_path: str, params: dict) -> Union[dict, Response]:
         print(response.text)
         return response
 
+# http://<HOST>:<PORT>/webhdfs/v1/<PATH>?op=LISTSTATUS
+# "http://localhost:9870/webhdfs/v1/crypto/stocks?op=LISTSTATUS"

@@ -71,3 +71,31 @@ def get_stock() -> dict:
 
 # get_news()
 # print(pandas.json_normalize(get_stock()).to_dict())
+
+
+def get_stock_by_symbol(symbol: str, country: str) -> dict:
+    import investpy
+
+    profile_tesla: dict = investpy.get_stock_company_profile(stock=symbol, country=country, language='english')
+    print(profile_tesla['desc'])
+    df_tesla: pandas.DataFrame = investpy.get_stock_recent_data(stock=symbol, country=country,
+                                                                as_json=False, order='ascending')
+    print(df_tesla.keys().values)
+    print(df_tesla.values[len(df_tesla.values)-1])
+    # print(type(df_tesla.values[len(df_tesla.values)-1]))  # <class 'numpy.ndarray'>
+    # print(df_tesla)
+
+    # from data_types_and_structures import DataTypesHandler
+    # DataTypesHandler.print_data_recursively(
+    #     data=df_tesla.to_dict(), print_dict=DataTypesHandler.PRINT_DICT
+    # )
+
+    return {
+        symbol: {
+            'status': {
+                'keys': df_tesla.keys().values.tolist(),
+                'values': df_tesla.values[len(df_tesla.values)-1].tolist()
+            },
+            'description': profile_tesla['desc']
+        }
+    }
