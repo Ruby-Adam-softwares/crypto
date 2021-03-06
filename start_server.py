@@ -98,6 +98,7 @@ def start_server():
 
         # Entry Point
         run_py_file("server")
+        # run_py_file("get_save_data")
         # run_py_file("make_data_accessible")
         # run_py_file("standardize")
 
